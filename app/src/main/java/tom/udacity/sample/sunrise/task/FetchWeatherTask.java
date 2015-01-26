@@ -38,11 +38,9 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
     private static final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
     private final Context mContext;
-    private final BaseAdapter mForecastAdapter;
 
-    public FetchWeatherTask(Context context, BaseAdapter adapter) {
+    public FetchWeatherTask(Context context) {
         mContext = context;
-        mForecastAdapter = adapter;
     }
 
     @Override
@@ -142,12 +140,6 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 
     @Override
     protected void onPostExecute(String[] results) {
-//        if (results != null) {
-//            mForecastAdapter.clear();
-//            for (String data : results) {
-//                mForecastAdapter.add(data);
-//            }
-//        }
     }
 
 
