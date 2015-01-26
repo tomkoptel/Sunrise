@@ -10,7 +10,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,9 +38,9 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
     private static final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
     private final Context mContext;
-    private final ArrayAdapter<String> mForecastAdapter;
+    private final BaseAdapter mForecastAdapter;
 
-    public FetchWeatherTask(Context context, ArrayAdapter<String> adapter) {
+    public FetchWeatherTask(Context context, BaseAdapter adapter) {
         mContext = context;
         mForecastAdapter = adapter;
     }
@@ -142,12 +142,12 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 
     @Override
     protected void onPostExecute(String[] results) {
-        if (results != null) {
-            mForecastAdapter.clear();
-            for (String data : results) {
-                mForecastAdapter.add(data);
-            }
-        }
+//        if (results != null) {
+//            mForecastAdapter.clear();
+//            for (String data : results) {
+//                mForecastAdapter.add(data);
+//            }
+//        }
     }
 
 
