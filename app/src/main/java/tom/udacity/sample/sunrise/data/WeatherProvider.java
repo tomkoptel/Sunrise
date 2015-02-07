@@ -1,12 +1,3 @@
-/*
- * Copyright (c) 2015. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
- * Morbi non lorem porttitor neque feugiat blandit. Ut vitae ipsum eget quam lacinia accumsan.
- * Etiam sed turpis ac ipsum condimentum fringilla. Maecenas magna.
- * Proin dapibus sapien vel ante. Aliquam erat volutpat. Pellentesque sagittis ligula eget metus.
- * Vestibulum commodo. Ut rhoncus gravida arcu.
- */
-
-package tom.udacity.sample.sunrise.data;// /*
 //  * Copyright (C) 2014 The Android Open Source Project
 //  *
 //  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +12,8 @@ package tom.udacity.sample.sunrise.data;// /*
 //  * See the License for the specific language governing permissions and
 //  * limitations under the License.
 //  */
-// package com.example.android.sunshine.app.data;
+
+package tom.udacity.sample.sunrise.data;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -31,13 +23,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
-// import android.content.ContentUris;
-// import android.content.ContentValues;
-// import android.content.UriMatcher;
-// import android.database.Cursor;
-// import android.database.sqlite.SQLiteDatabase;
-// import android.database.sqlite.SQLiteQueryBuilder;
-// import android.net.Uri;
 
 public class WeatherProvider extends ContentProvider {
     // The URI Matcher used by this content provider.

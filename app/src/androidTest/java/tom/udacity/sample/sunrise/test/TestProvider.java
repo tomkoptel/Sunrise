@@ -21,14 +21,6 @@ package tom.udacity.sample.sunrise.test;// /*
 //  * See the License for the specific language governing permissions and
 //  * limitations under the License.
 //  */
-// package com.example.android.sunshine.app.test;
-
-// import android.annotation.TargetApi;
-// import android.content.ContentUris;
-// import android.content.ContentValues;
-// import android.database.Cursor;
-// import android.net.Uri;
-// import android.os.Build;
 
 import android.annotation.TargetApi;
 import android.content.ContentUris;
@@ -41,46 +33,9 @@ import android.util.Log;
 
 import static tom.udacity.sample.sunrise.data.WeatherContract.LocationEntry;
 import static tom.udacity.sample.sunrise.data.WeatherContract.WeatherEntry;
-// import android.util.Log;
 
 public class TestProvider extends AndroidTestCase {
     private static final String LOG_TAG = TestProvider.class.getSimpleName();
-
-//     public static final String LOG_TAG = TestProvider.class.getSimpleName();
-
-    // brings our database to an empty state
-    public void deleteAllRecords() {
-        mContext.getContentResolver().delete(
-                WeatherEntry.CONTENT_URI,
-                null,
-                null
-        );
-        mContext.getContentResolver().delete(
-                LocationEntry.CONTENT_URI,
-                null,
-                null
-        );
-
-        Cursor cursor = mContext.getContentResolver().query(
-                WeatherEntry.CONTENT_URI,
-                null,
-                null,
-                null,
-                null
-        );
-        assertEquals(0, cursor.getCount());
-        cursor.close();
-
-        cursor = mContext.getContentResolver().query(
-                LocationEntry.CONTENT_URI,
-                null,
-                null,
-                null,
-                null
-        );
-        assertEquals(0, cursor.getCount());
-        cursor.close();
-    }
 
     // Since we want each test to start with a clean slate, run deleteAllRecords
     // in setUp (called by the test runner before each test).
@@ -305,4 +260,39 @@ public class TestProvider extends AndroidTestCase {
                 .insert(WeatherEntry.CONTENT_URI, kalamazooWeatherValues);
         assertTrue(weatherInsertUri != null);
     }
+
+    // brings our database to an empty state
+    public void deleteAllRecords() {
+        mContext.getContentResolver().delete(
+                WeatherEntry.CONTENT_URI,
+                null,
+                null
+        );
+        mContext.getContentResolver().delete(
+                LocationEntry.CONTENT_URI,
+                null,
+                null
+        );
+
+        Cursor cursor = mContext.getContentResolver().query(
+                WeatherEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null
+        );
+        assertEquals(0, cursor.getCount());
+        cursor.close();
+
+        cursor = mContext.getContentResolver().query(
+                LocationEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null
+        );
+        assertEquals(0, cursor.getCount());
+        cursor.close();
+    }
+
 }
