@@ -15,6 +15,9 @@
 
 package tom.udacity.sample.sunrise;
 
+import android.annotation.TargetApi;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -27,17 +30,20 @@ import tom.udacity.sample.sunrise.task.FetchWeatherTask;
 public class SettingsActivity extends PreferenceActivity
         implements Preference.OnPreferenceChangeListener {
 
-    private boolean mBindingPreference;
+    // since we use the preference change initially to populate the summary
+    // field, we'll ignore that change at start of the activity
+    boolean mBindingPreference;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        mBindingPreference = true;
         super.onCreate(savedInstanceState);
+        // Add 'general' preferences, defined in the XML file
         addPreferencesFromResource(R.xml.pref_general);
 
+        // For all preferences, attach an OnPreferenceChangeListener so the UI summary can be
+        // updated when the preference changes.
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_location_key)));
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_units_key)));
-        mBindingPreference = false;
     }
 
     /**
@@ -46,6 +52,8 @@ public class SettingsActivity extends PreferenceActivity
      * is changed.)
      */
     private void bindPreferenceSummaryToValue(Preference preference) {
+        mBindingPreference = true;
+
         // Set the listener to watch for value changes.
         preference.setOnPreferenceChangeListener(this);
 
@@ -56,6 +64,7 @@ public class SettingsActivity extends PreferenceActivity
                         .getDefaultSharedPreferences(preference.getContext())
                         .getString(preference.getKey(), ""));
 
+        mBindingPreference = false;
     }
 
     @Override
@@ -87,6 +96,12 @@ public class SettingsActivity extends PreferenceActivity
             preference.setSummary(stringValue);
         }
         return true;
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    @Override
+    public Intent getParentActivityIntent() {
+        return super.getParentActivityIntent().addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     }
 
 }
