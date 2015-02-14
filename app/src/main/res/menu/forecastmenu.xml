@@ -14,4 +14,9 @@
         android:icon="@drawable/ic_action_refresh"
         android:title="@string/menu_item_title_refresh"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_map"
+        android:title="@string/action_map"
+        app:showAsAction="never" />
 </menu>
