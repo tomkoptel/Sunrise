@@ -17,9 +17,11 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SyncRequest;
 import android.content.SyncResult;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -45,6 +47,10 @@ import static tom.udacity.sample.sunrise.data.WeatherContract.getDbDateString;
 
 public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     public final String LOG_TAG = SunshineSyncAdapter.class.getSimpleName();
+    // Interval at which to sync with the weather, in milliseconds.
+    // 60 seconds (1 minute) * 180 = 3 hours
+    public static final int SYNC_INTERVAL = 60 * 180;
+    public static final int SYNC_FLEXTIME = SYNC_INTERVAL / 3;
 
     public SunshineSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
@@ -182,7 +188,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             // Insert the new weather information into the database
             Vector<ContentValues> cVVector = new Vector<ContentValues>(weatherArray.length());
 
-            for(int i = 0; i < weatherArray.length(); i++) {
+            for (int i = 0; i < weatherArray.length(); i++) {
                 // These are the values that will be collected.
 
                 long dateTime;
@@ -238,7 +244,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 
                 cVVector.add(weatherValues);
             }
-            if ( cVVector.size() > 0 ) {
+            if (cVVector.size() > 0) {
                 ContentValues[] cvArray = new ContentValues[cVVector.size()];
                 cVVector.toArray(cvArray);
                 getContext().getContentResolver().bulkInsert(WeatherEntry.CONTENT_URI, cvArray);
@@ -258,9 +264,9 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
      * Helper method to handle insertion of a new location in the weather database.
      *
      * @param locationSetting The location string used to request updates from the server.
-     * @param cityName A human-readable city name, e.g "Mountain View"
-     * @param lat the latitude of the city
-     * @param lon the longitude of the city
+     * @param cityName        A human-readable city name, e.g "Mountain View"
+     * @param lat             the latitude of the city
+     * @param lon             the longitude of the city
      * @return the row ID of the added location.
      */
     private long addLocation(String locationSetting, String cityName, double lat, double lon) {
@@ -306,7 +312,25 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     /**
+     * Helper method to schedule the sync adapter periodic execution
+     */
+    public static void configurePeriodicSync(Context context, int syncInterval, int flexTime) {
+        Account account = getSyncAccount(context);
+        String authority = context.getString(R.string.content_authority);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            SyncRequest syncRequest = new SyncRequest.Builder()
+                    .syncPeriodic(syncInterval, flexTime)
+                    .setSyncAdapter(account, authority)
+                    .build();
+            ContentResolver.requestSync(syncRequest);
+        } else {
+            ContentResolver.addPeriodicSync(account, authority, new Bundle(), syncInterval);
+        }
+    }
+
+    /**
      * Helper method to have the sync adapter sync immediately
+     *
      * @param context The context used to access the account service
      */
     public static void syncImmediately(Context context) {
@@ -335,7 +359,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                 context.getString(R.string.app_name), context.getString(R.string.sync_account_type));
 
         // If the password doesn't exist, the account doesn't exist
-        if ( null == accountManager.getPassword(newAccount) ) {
+        if (null == accountManager.getPassword(newAccount)) {
 
         /*
          * Add the account and account type, no password or user data
@@ -350,10 +374,30 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
              * then call ContentResolver.setIsSyncable(account, AUTHORITY, 1)
              * here.
              */
-
+            onAccountCreated(newAccount, context);
 
         }
         return newAccount;
     }
 
+    private static void onAccountCreated(Account newAccount, Context context) {
+        /*
+         * Since we've created an account
+         */
+        SunshineSyncAdapter.configurePeriodicSync(context, SYNC_INTERVAL, SYNC_FLEXTIME);
+
+        /*
+         * Without calling setSyncAutomatically, our periodic sync will not be enabled.
+         */
+        ContentResolver.setSyncAutomatically(newAccount, context.getString(R.string.content_authority), true);
+
+        /*
+         * Finally, let's do a sync to get things started
+         */
+        syncImmediately(context);
+    }
+
+    public static void initializeSyncAdapter(Context context) {
+        getSyncAccount(context);
+    }
 }
