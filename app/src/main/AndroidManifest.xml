@@ -4,12 +4,9 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Permissions required by the sync adapter -->
-    <uses-permission
-        android:name="android.permission.READ_SYNC_SETTINGS"/>
-    <uses-permission
-        android:name="android.permission.WRITE_SYNC_SETTINGS"/>
-    <uses-permission
-        android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
 
     <application
         android:allowBackup="true"
@@ -49,16 +46,10 @@
             android:exported="false"
             android:syncable="true" />
 
-        <service
-            android:name=".service.SunshineService"
-            android:exported="false" />
-
-        <receiver
-            android:name=".service.SunshineService$AlarmReceiver"
-            android:exported="false" />
-
         <!-- SyncAdapter's dummy authentication service -->
-        <service android:name=".sync.SunshineAuthenticatorService">
+        <service
+            android:name=".sync.SunshineAuthenticatorService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
@@ -70,8 +61,7 @@
         <!-- The SyncAdapter service -->
         <service
             android:name=".sync.SunshineSyncService"
-            android:exported="true"
-            >
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.content.SyncAdapter" />
             </intent-filter>

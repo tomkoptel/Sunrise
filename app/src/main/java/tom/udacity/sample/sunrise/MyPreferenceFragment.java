@@ -15,7 +15,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.preference.PreferenceFragment;
 
 import tom.udacity.sample.sunrise.data.WeatherContract;
-import tom.udacity.sample.sunrise.task.FetchWeatherTask;
+import tom.udacity.sample.sunrise.sync.SunshineSyncAdapter;
 
 import static android.preference.Preference.OnPreferenceChangeListener;
 
@@ -64,9 +64,7 @@ public class MyPreferenceFragment extends PreferenceFragment implements OnPrefer
         // are we starting the preference activity?
         if ( !mBindingPreference ) {
             if (preference.getKey().equals(getString(R.string.pref_location_key))) {
-                FetchWeatherTask weatherTask = new FetchWeatherTask(getActivity());
-                String location = value.toString();
-                weatherTask.execute(location);
+                SunshineSyncAdapter.syncImmediately(getActivity());
             } else {
                 // notify code that weather may be impacted
                 getActivity().getContentResolver().notifyChange(WeatherContract.WeatherEntry.CONTENT_URI, null);
