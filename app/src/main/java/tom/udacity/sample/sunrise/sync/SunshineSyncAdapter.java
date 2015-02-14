@@ -42,6 +42,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Vector;
 
@@ -273,6 +274,13 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                 cVVector.toArray(cvArray);
                 getContext().getContentResolver().bulkInsert(WeatherEntry.CONTENT_URI, cvArray);
 
+                Calendar cal = Calendar.getInstance(); //Get's a calendar object with the current time.
+                cal.add(Calendar.DATE, -1); //Signifies yesterday's date
+                String yesterdayDate = WeatherContract.getDbDateString(cal.getTime());
+                getContext().getContentResolver().delete(WeatherEntry.CONTENT_URI,
+                        WeatherEntry.COLUMN_DATETEXT + " <= ?",
+                        new String[]{yesterdayDate});
+
                 notifyWeather();
             }
             Log.d(LOG_TAG, "FetchWeatherTask Complete. " + cVVector.size() + " Inserted");
@@ -410,6 +418,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             SyncRequest syncRequest = new SyncRequest.Builder()
                     .syncPeriodic(syncInterval, flexTime)
                     .setSyncAdapter(account, authority)
+                    .setExtras(new Bundle())
                     .build();
             ContentResolver.requestSync(syncRequest);
         } else {
