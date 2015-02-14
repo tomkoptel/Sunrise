@@ -4,9 +4,10 @@
 
     <!-- State when a row is being pressed, but hasn't yet been activated (finger down) -->
     <item android:state_pressed="true"
-        android:drawable="@color/grey" />
+        android:drawable="@color/sunshine_light_blue" />
 
-    <!-- Used when the view is "activated". -->
+    <!-- When the view is "activated".  In SINGLE_CHOICE_MODE, it flags the active row
+         of a ListView -->
     <item android:state_activated="true"
         android:drawable="@color/sunshine_light_blue" />
 
