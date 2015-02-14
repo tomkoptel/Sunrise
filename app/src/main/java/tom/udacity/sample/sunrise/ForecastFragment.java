@@ -15,6 +15,7 @@
 
 package tom.udacity.sample.sunrise;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -35,7 +36,7 @@ import android.widget.ListView;
 import java.util.Date;
 
 import tom.udacity.sample.sunrise.data.WeatherContract;
-import tom.udacity.sample.sunrise.task.FetchWeatherTask;
+import tom.udacity.sample.sunrise.service.SunshineService;
 import tom.udacity.sample.sunrise.util.Utility;
 
 import static tom.udacity.sample.sunrise.data.WeatherContract.LocationEntry;
@@ -123,6 +124,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             mPosition = savedInstanceState.getInt(POSITION_ARG);
         }
 
+        mForecastAdapter.setUseTodayLayout(mUseTodayLayout);
+
         return rootView;
     }
 
@@ -145,16 +148,18 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         int itemId = item.getItemId();
 
         if (itemId == R.id.action_refresh) {
-            performReferesh();
+            updateWeather();
             return true;
         }
 
         return result;
     }
 
-    private void performReferesh() {
-        new FetchWeatherTask(getActivity())
-                .execute(Utility.getPreferredLocation(getActivity()));
+    private void updateWeather() {
+        Intent intent = new Intent(getActivity(), SunshineService.class);
+        intent.putExtra(SunshineService.LOCATION_QUERY_EXTRA,
+                Utility.getPreferredLocation(getActivity()));
+        getActivity().startService(intent);
     }
 
     @Override
