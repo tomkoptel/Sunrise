@@ -62,4 +62,7 @@
     <!-- Humidity format in % [CHAR LIMIT=NONE] -->
     <string name="format_humidity">Humidity: <xliff:g id="humidity">%1.0f</xliff:g> %%</string>
 
+    <!-- SyncAdapter related -->
+    <string name="sync_account_type">sunshine.example.com</string>
+    <string name="content_authority">tom.udacity.sample.sunrise.app</string>
 </resources>
