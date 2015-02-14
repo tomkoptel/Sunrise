@@ -73,10 +73,12 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public static final int COL_WEATHER_MIN_TEMP = 4;
     public static final int COL_LOCATION_SETTING = 5;
     public static final int COL_WEATHER_CONDITION_ID = 6;
+    private static final String POSITION_ARG = "POSITION";
 
     private CursorAdapter mForecastAdapter;
     private ListView mListView;
     private String mLocation;
+    private int mPosition = ListView.INVALID_POSITION;
 
     /**
      * A callback interface that all activities containing this fragment must
@@ -108,6 +110,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mPosition = position;
                 Cursor cursor = mForecastAdapter.getCursor();
                 if (cursor != null && cursor.moveToPosition(position)) {
                     ((Callback)getActivity())
@@ -115,6 +118,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 }
             }
         });
+
+        if (savedInstanceState != null && savedInstanceState.containsKey(POSITION_ARG)) {
+            mPosition = savedInstanceState.getInt(POSITION_ARG);
+        }
 
         return rootView;
     }
@@ -158,7 +165,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         }
     }
 
-
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         // This is called when a new Loader needs to be created.  This
@@ -191,10 +197,19 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mForecastAdapter.swapCursor(data);
+        if (mPosition != ListView.INVALID_POSITION) {
+            mListView.setSelection(mPosition);
+        }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         mForecastAdapter.swapCursor(null);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt(POSITION_ARG, mPosition);
+        super.onSaveInstanceState(outState);
     }
 }
