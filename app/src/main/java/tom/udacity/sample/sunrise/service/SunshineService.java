@@ -9,8 +9,10 @@
 package tom.udacity.sample.sunrise.service;
 
 import android.app.IntentService;
+import android.content.BroadcastReceiver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -171,7 +173,7 @@ public class SunshineService extends IntentService {
             // Insert the new weather information into the database
             Vector<ContentValues> cVVector = new Vector<ContentValues>(weatherArray.length());
 
-            for(int i = 0; i < weatherArray.length(); i++) {
+            for (int i = 0; i < weatherArray.length(); i++) {
                 // These are the values that will be collected.
 
                 long dateTime;
@@ -227,7 +229,7 @@ public class SunshineService extends IntentService {
 
                 cVVector.add(weatherValues);
             }
-            if ( cVVector.size() > 0 ) {
+            if (cVVector.size() > 0) {
                 ContentValues[] cvArray = new ContentValues[cVVector.size()];
                 cVVector.toArray(cvArray);
                 this.getContentResolver().bulkInsert(WeatherContract.WeatherEntry.CONTENT_URI,
@@ -249,9 +251,9 @@ public class SunshineService extends IntentService {
      * Helper method to handle insertion of a new location in the weather database.
      *
      * @param locationSetting The location string used to request updates from the server.
-     * @param cityName A human-readable city name, e.g "Mountain View"
-     * @param lat the latitude of the city
-     * @param lon the longitude of the city
+     * @param cityName        A human-readable city name, e.g "Mountain View"
+     * @param lat             the latitude of the city
+     * @param lon             the longitude of the city
      * @return the row ID of the added location.
      */
     private long addLocation(String locationSetting, String cityName, double lat, double lon) {
@@ -293,11 +295,18 @@ public class SunshineService extends IntentService {
         }
 
         // Always close our cursor
-        if ( null != locationCursor ) locationCursor.close();
+        if (null != locationCursor) locationCursor.close();
 
         // Wait, that worked?  Yes!
         return locationId;
     }
 
-
+    public static class AlarmReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Intent sendIntent = new Intent(context, SunshineService.class);
+            sendIntent.putExtra(SunshineService.LOCATION_QUERY_EXTRA, intent.getStringExtra(SunshineService.LOCATION_QUERY_EXTRA));
+            context.startService(sendIntent);
+        }
+    }
 }
