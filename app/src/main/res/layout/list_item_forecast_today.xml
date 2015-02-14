@@ -10,6 +10,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/touch_selector"
     android:baselineAligned="false"
     android:minHeight="?android:attr/listPreferredItemHeight"
     android:orientation="horizontal"
