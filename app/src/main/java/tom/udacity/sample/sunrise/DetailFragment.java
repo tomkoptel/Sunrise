@@ -28,6 +28,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import tom.udacity.sample.sunrise.data.WeatherContract;
 import tom.udacity.sample.sunrise.util.Utility;
 
 import static tom.udacity.sample.sunrise.data.WeatherContract.LocationEntry;
@@ -71,6 +72,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private TextView mHumidityView;
     private TextView mWindView;
     private TextView mPressureView;
+    private String mDateStr;
 
     public DetailFragment() {
         setHasOptionsMenu(true);
@@ -85,6 +87,16 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            mDateStr = arguments.getString(DetailActivity.DATE_KEY);
+        }
+
+        if (savedInstanceState != null) {
+            mLocation = savedInstanceState.getString(LOCATION_KEY);
+        }
+
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
         mIconView = (ImageView) rootView.findViewById(R.id.detail_icon);
         mDateView = (TextView) rootView.findViewById(R.id.detail_date_textview);
@@ -150,20 +162,12 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Log.v(LOG_TAG, "In onCreateLoader");
-        Intent intent = getActivity().getIntent();
-        if (intent == null || !intent.hasExtra(DetailActivity.DATE_KEY)) {
-            return null;
-        }
-        String forecastDate = intent.getStringExtra(DetailActivity.DATE_KEY);
-
         // Sort order:  Ascending, by date.
-        String sortOrder = WeatherEntry.COLUMN_DATETEXT + " ASC";
+        String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATETEXT + " ASC";
 
         mLocation = Utility.getPreferredLocation(getActivity());
-        Uri weatherForLocationUri = WeatherEntry.buildWeatherLocationWithDate(
-                mLocation, forecastDate);
-        Log.v(LOG_TAG, weatherForLocationUri.toString());
+        Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
+                mLocation, mDateStr);
 
         // Now create and return a CursorLoader that will take care of
         // creating a Cursor for the data being displayed.
@@ -225,8 +229,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             // We still need this for the share intent
             mForecast = String.format("%s - %s - %s/%s", dateText, description, high, low);
 
-            Log.v(LOG_TAG, "Forecast String: " + mForecast);
-
             // If onCreateOptionsMenu has already happened, we need to update the share intent now.
             if (mShareActionProvider != null) {
                 mShareActionProvider.setShareIntent(createShareForecastIntent());
@@ -235,6 +237,5 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-    }
+    public void onLoaderReset(Loader<Cursor> loader) { }
 }
